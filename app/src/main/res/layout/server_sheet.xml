@@ -16,12 +16,19 @@
         android:orientation="vertical"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="48dp"
+            android:layout_height="5dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@android:color/darker_gray" />
+
         <TextView
             android:id="@+id/server_sheet_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
-            android:paddingTop="24dp"
+            android:paddingTop="8dp"
             android:paddingEnd="16dp"
             android:paddingBottom="16dp"
             android:text="@string/server_sheet_title"
@@ -53,7 +60,8 @@
                 android:paddingEnd="16dp"
                 android:text="Undefined server name"
                 android:textAlignment="center"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                tools:ignore="HardcodedText" />
         </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -73,17 +81,21 @@
                 android:editable="false"
                 android:text="mc.example.com"
                 tools:ignore="HardcodedText" />
+
         </com.google.android.material.textfield.TextInputLayout>
 
-        <androidx.constraintlayout.widget.Barrier
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            app:barrierDirection="start" />
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1" />
 
         <Button
             android:id="@+id/server_sheet_copy_icon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:insetLeft="8dp"
+            android:insetRight="8dp"
             android:text="@string/server_sheet_copy_icon"
             android:theme="@style/Widget.Material3.Button.OutlinedButton"
             app:cornerRadius="8dp" />

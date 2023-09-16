@@ -1,27 +1,18 @@
 package com.launium.mcping.ui.home
 
-import android.graphics.Color
+import android.content.Intent
 import android.os.Bundle
-import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.color.MaterialColors
-import com.google.android.material.resources.MaterialAttributes
 import com.launium.mcping.R
+import com.launium.mcping.database.ServerManager
 import com.launium.mcping.databinding.FragmentHomeBinding
 import com.launium.mcping.databinding.ServerItemBinding
 import com.launium.mcping.server.MinecraftServer
-import java.util.Random
 
 class HomeFragment : Fragment() {
 
@@ -46,11 +37,24 @@ class HomeFragment : Fragment() {
         binding.container.layoutManager = linearLayoutManager
         binding.container.adapter = adapter
 
+        binding.fabAddNewServer.setOnClickListener {
+            startActivityForResult(Intent(requireContext(), AddServerActivity::class.java), 1)
+        }
+
         return binding.root
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            1 -> adapter.updateServerList(true)
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.container.visibility = View.GONE
         _binding = null
     }
 
@@ -58,7 +62,18 @@ class HomeFragment : Fragment() {
 
         lateinit var servers: List<MinecraftServer>
 
+        fun updateServerList(notify: Boolean) {
+            servers = ServerManager.serverDao.list()
+            if (notify) {
+                notifyDataSetChanged()
+            }
+        }
+
         init {
+            updateServerList(false)
+        }
+
+        /*init {
             servers = listOf(
                 MinecraftServer("first", "hello"),
                 MinecraftServer("second", "world"),
@@ -66,7 +81,7 @@ class HomeFragment : Fragment() {
                 MinecraftServer("this", ""),
                 MinecraftServer("is good!", ""),
             )
-        }
+        }*/
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServerView {
             return ServerView(
@@ -103,6 +118,9 @@ class HomeFragment : Fragment() {
             binding.pingText.text = R.string.server_latency_message.toString()
                 .format(System.currentTimeMillis())
 
+            binding.button.setCompoundDrawablesWithIntrinsicBounds(
+                server.icon, null, null, null
+            )
             binding.button.setOnClickListener {
                 ServerSheetDialog(binding.root.context, server).show()
             }

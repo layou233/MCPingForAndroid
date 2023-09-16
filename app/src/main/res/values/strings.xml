@@ -3,13 +3,16 @@
     <string name="title_home">Home</string>
     <string name="title_discovery">Discovery</string>
     <string name="title_settings">Settings</string>
+    <string name="title_add_server">Add a new server</string>
 
     <string name="home_title">Servers</string>
     <string name="server_sheet_title">Server details</string>
     <string name="server_sheet_copy_icon">Copy server icon to Clipboard</string>
-    
+
     <string name="server_latency_message">%1$d ms</string>
     <string name="server_address">Server address</string>
+    <string name="server_display_name">Server display name</string>
 
     <string name="description_add_server">Add a new server</string>
+    <string name="description_save">Save</string>
 </resources>
