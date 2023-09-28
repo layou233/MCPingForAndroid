@@ -12,8 +12,6 @@ import com.launium.mcping.R
 import com.launium.mcping.database.ServerManager
 import com.launium.mcping.databinding.ActivityAddServerBinding
 import com.launium.mcping.server.MinecraftServer
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class AddServerActivity : AppCompatActivity() {
 
@@ -21,13 +19,12 @@ class AddServerActivity : AppCompatActivity() {
         private const val TAG = "AddServerActivity"
     }
 
-    private var _binding: ActivityAddServerBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: ActivityAddServerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        _binding = ActivityAddServerBinding.inflate(layoutInflater)
+        binding = ActivityAddServerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         supportActionBar?.let {
@@ -55,21 +52,19 @@ class AddServerActivity : AppCompatActivity() {
             }
 
             R.id.save_new_server -> {
-                GlobalScope.launch {
-                    try {
-                        ServerManager.serverDao.add(
-                            MinecraftServer(
-                                binding.inputDisplayName.text.toString(),
-                                binding.inputAddress.text.toString()
-                            )
+                try {
+                    ServerManager.serverDao.add(
+                        MinecraftServer(
+                            binding.inputDisplayName.text.toString(),
+                            binding.inputAddress.text.toString()
                         )
-                    } catch (e: Exception) {
-                        val stackTrace = Log.getStackTraceString(e)
-                        Log.e(TAG, stackTrace)
-                        runOnUiThread {
-                            Toast.makeText(Application.instance, stackTrace, Toast.LENGTH_LONG)
-                                .show()
-                        }
+                    )
+                } catch (e: Exception) {
+                    val stackTrace = Log.getStackTraceString(e)
+                    Log.e(TAG, stackTrace)
+                    runOnUiThread {
+                        Toast.makeText(Application.instance, stackTrace, Toast.LENGTH_LONG)
+                            .show()
                     }
                 }
                 onBackPressedDispatcher.onBackPressed()

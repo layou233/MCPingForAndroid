@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.launium.mcping.R
 import com.launium.mcping.database.ServerManager
 import com.launium.mcping.databinding.FragmentHomeBinding
 import com.launium.mcping.databinding.ServerItemBinding
@@ -114,15 +113,16 @@ class HomeFragment : Fragment() {
         fun bind(server: MinecraftServer) {
             this.server = server
             binding.button.text = server.name
-            binding.pingText.text
-            binding.pingText.text = R.string.server_latency_message.toString()
-                .format(System.currentTimeMillis())
-
-            binding.button.setCompoundDrawablesWithIntrinsicBounds(
-                server.icon, null, null, null
-            )
+            setLatency(binding.root.context, binding.pingText, server.latestPing)
+            server.icon?.let { // use pack.png as default, do not clear the content
+                binding.serverIcon.setImageDrawable(it)
+            }
             binding.button.setOnClickListener {
-                ServerSheetDialog(binding.root.context, server).show()
+                ServerSheetDialog(binding.root.context, server).apply {
+                    this.setOnCancelListener {
+                        setLatency(binding.root.context, binding.pingText, server.latestPing)
+                    }
+                }.show()
             }
         }
 

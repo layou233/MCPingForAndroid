@@ -27,8 +27,7 @@ android {
         release {
             isMinifyEnabled = true
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -54,6 +53,8 @@ android {
 
 dependencies {
     ksp("androidx.room:room-compiler:2.5.2")
+    implementation("io.ktor:ktor-network:2.3.4")
+    implementation("com.alibaba.fastjson2:fastjson2:2.0.40.android4")
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.8.0")
