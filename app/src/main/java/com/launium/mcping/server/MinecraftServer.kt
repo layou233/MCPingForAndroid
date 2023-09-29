@@ -41,6 +41,9 @@ class MinecraftServer() {
     var motdIcon = ""
 
     @Ignore
+    var removed = false
+
+    @Ignore
     var icon: Drawable? = null
         get() {
             if (motdIcon.isEmpty()) {

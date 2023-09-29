@@ -54,6 +54,7 @@ android {
 dependencies {
     ksp("androidx.room:room-compiler:2.5.2")
     implementation("io.ktor:ktor-network:2.3.4")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("com.alibaba.fastjson2:fastjson2:2.0.40.android4")
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")

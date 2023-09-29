@@ -9,7 +9,7 @@ import com.launium.mcping.R
 
 @SuppressLint("SetTextI18n")
 internal fun setLatency(context: Context, textView: TextView, latency: Int) {
-    if (latency == Int.MAX_VALUE) {
+    if (latency > 300000) {
         textView.text = R.string.description_untested.toString()
         textView.setTextColor(Color.DKGRAY)
     } else {

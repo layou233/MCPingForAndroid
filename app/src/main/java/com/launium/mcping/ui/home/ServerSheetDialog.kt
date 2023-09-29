@@ -1,6 +1,5 @@
 package com.launium.mcping.ui.home
 
-import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -9,6 +8,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.launium.mcping.R
 import com.launium.mcping.database.ServerManager
 import com.launium.mcping.databinding.ServerSheetBinding
@@ -40,7 +40,7 @@ class ServerSheetDialog(context: Context, private val server: MinecraftServer) :
             server.icon?.let { binding.serverSheetImage.setImageDrawable(it) }
             binding.serverSheetTestLatency.setOnClickListener { ping() }
             binding.serverSheetDeleteServer.setOnClickListener {
-                AlertDialog.Builder(context).apply {
+                MaterialAlertDialogBuilder(context).apply {
                     setTitle(R.string.title_confirm_delete)
                     setMessage(R.string.dialog_delete)
                     setIcon(R.drawable.ic_delete_forever_24dp)
@@ -48,8 +48,9 @@ class ServerSheetDialog(context: Context, private val server: MinecraftServer) :
                     setPositiveButton(R.string.description_delete) { dialog, _ ->
                         try {
                             ServerManager.serverDao.delete(server)
+                            server.removed = true
                             dialog.dismiss()
-                            onBackPressedDispatcher.onBackPressed()
+                            onBackPressed()
                         } catch (e: Exception) {
                             val stackTrace = Log.getStackTraceString(e)
                             Log.e(TAG, stackTrace)
@@ -105,9 +106,11 @@ class ServerSheetDialog(context: Context, private val server: MinecraftServer) :
             } catch (e: Exception) {
                 val stackTrace = Log.getStackTraceString(e)
                 Log.e(TAG, stackTrace)
-                Toast.makeText(context, stackTrace, Toast.LENGTH_LONG)
-                    .show()
-                false
+                Toast.makeText(
+                    context,
+                    stackTrace.substringBefore('\n'),
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
     }

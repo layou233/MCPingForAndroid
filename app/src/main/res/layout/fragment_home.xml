@@ -13,13 +13,19 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="24dp"
         android:contentDescription="@string/description_add_server"
-        app:behavior_autoHide="false"
         app:srcCompat="@drawable/ic_add_24dp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/container"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp" />
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -7,11 +7,11 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import com.launium.mcping.Application
 import com.launium.mcping.R
 import com.launium.mcping.database.ServerManager
 import com.launium.mcping.databinding.ActivityAddServerBinding
 import com.launium.mcping.server.MinecraftServer
+import java.net.URI
 
 class AddServerActivity : AppCompatActivity() {
 
@@ -47,11 +47,23 @@ class AddServerActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                onBackPressedDispatcher.onBackPressed()
+                onBackPressed()
                 return true
             }
 
             R.id.save_new_server -> {
+                try {
+                    val uri = URI.create("mc://${binding.inputAddress.text}")
+                    //InetAddress.getByName(uri.host) // try resolve hostname
+                } catch (e: Exception) {
+                    val stackTrace = Log.getStackTraceString(e).substringBefore('\n')
+                    Toast.makeText(
+                        binding.root.context,
+                        "Bad address: $stackTrace",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    return false
+                }
                 try {
                     ServerManager.serverDao.add(
                         MinecraftServer(
@@ -59,15 +71,14 @@ class AddServerActivity : AppCompatActivity() {
                             binding.inputAddress.text.toString()
                         )
                     )
+                    setResult(RESULT_OK)
                 } catch (e: Exception) {
                     val stackTrace = Log.getStackTraceString(e)
                     Log.e(TAG, stackTrace)
-                    runOnUiThread {
-                        Toast.makeText(Application.instance, stackTrace, Toast.LENGTH_LONG)
-                            .show()
-                    }
+                    Toast.makeText(binding.root.context, stackTrace, Toast.LENGTH_LONG)
+                        .show()
                 }
-                onBackPressedDispatcher.onBackPressed()
+                onBackPressed()
                 return true
             }
         }

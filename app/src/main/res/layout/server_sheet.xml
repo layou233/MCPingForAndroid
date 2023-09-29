@@ -52,7 +52,6 @@
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
             android:scaleType="centerCrop"
-            android:src="@mipmap/pack"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/server_sheet_title"
             app:srcCompat="@mipmap/pack" />
