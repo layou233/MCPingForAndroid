@@ -37,7 +37,7 @@ class ServerSheetDialog(context: Context, private val server: MinecraftServer) :
             binding.serverSheetAddress.text =
                 Editable.Factory.getInstance().newEditable(server.address)
             setLatency(context, binding.serverSheetLatencyText, server.latestPing)
-            server.icon?.let { binding.serverSheetImage.setImageDrawable(it) }
+            server.icon?.let { binding.serverSheetImage.setImageBitmap(it) }
             binding.serverSheetTestLatency.setOnClickListener { ping() }
             binding.serverSheetDeleteServer.setOnClickListener {
                 MaterialAlertDialogBuilder(context).apply {
@@ -100,7 +100,7 @@ class ServerSheetDialog(context: Context, private val server: MinecraftServer) :
                 }.await()
                 if (changed) {
                     setLatency(context, binding.serverSheetLatencyText, server.latestPing)
-                    server.icon?.let { binding.serverSheetImage.setImageDrawable(it) }
+                    server.icon?.let { binding.serverSheetImage.setImageBitmap(it) }
                 }
             } catch (_: CancellationException) {
             } catch (e: Exception) {

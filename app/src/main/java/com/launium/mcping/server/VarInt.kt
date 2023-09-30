@@ -36,7 +36,7 @@ fun ByteBuffer.readVarInt(): Int {
     return value
 }
 
-fun ByteBuffer.writeVarInt(value: Int): Int {
+fun ByteBuffer.putVarInt(value: Int): Int {
     var value = value
     var writtenBytes = 0
     while (true) {

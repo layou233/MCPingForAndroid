@@ -1,9 +1,8 @@
 package com.launium.mcping.server
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.Drawable
 import android.util.Base64
-import androidx.core.graphics.drawable.toDrawable
 import androidx.room.ColumnInfo
 import androidx.room.Delete
 import androidx.room.Entity
@@ -13,7 +12,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Update
-import com.launium.mcping.Application
 import com.launium.mcping.database.ServerManager
 import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.SocketOptions
@@ -44,7 +42,7 @@ class MinecraftServer() {
     var removed = false
 
     @Ignore
-    var icon: Drawable? = null
+    var icon: Bitmap? = null
         get() {
             if (motdIcon.isEmpty()) {
                 return null
@@ -53,7 +51,6 @@ class MinecraftServer() {
                 motdIcon.removePrefix("data:image/png;base64,"), Base64.DEFAULT
             )
             return BitmapFactory.decodeByteArray(content, 0, content.size)
-                .toDrawable(Application.instance.resources)
         }
 
     @androidx.room.Dao
@@ -95,7 +92,12 @@ class MinecraftServer() {
 
     suspend fun requestStatus(): Boolean {
         val client = connect()
-        val status = client.requestStatus(47)
+        val status = try {
+            client.requestStatus(47)
+        } catch (t: Throwable) {
+            client.close()
+            throw t
+        }
         client.close()
 
         var changed = false

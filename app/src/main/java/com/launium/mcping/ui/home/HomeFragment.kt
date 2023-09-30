@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.launium.mcping.R
 import com.launium.mcping.database.ServerManager
 import com.launium.mcping.databinding.FragmentHomeBinding
 import com.launium.mcping.databinding.ServerItemBinding
@@ -76,12 +77,15 @@ class HomeFragment : Fragment() {
                         semaphore.release()
                     }
                 }.joinAll()
-                onGoingRefreshJob.set(null)
-                binding.swipeRefreshLayout.isRefreshing = false
             }.let {
+                it.invokeOnCompletion {
+                    onGoingRefreshJob.set(null)
+                    _binding?.swipeRefreshLayout?.isRefreshing = false
+                }
                 onGoingRefreshJob.set(it)
             }
         }
+        binding.swipeRefreshLayout.isRefreshing = false
 
         binding.fabAddNewServer.setOnClickListener {
             addServerActivity.launch(Intent(requireContext(), AddServerActivity::class.java))
@@ -92,33 +96,20 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.container.visibility = View.GONE
+        onGoingRefreshJob.get()?.cancel()
+        binding.swipeRefreshLayout.isRefreshing = false
         _binding = null
         //addServerActivity.unregister()
     }
 
     private class Adapter(val home: HomeFragment) : RecyclerView.Adapter<ServerView>() {
 
-        lateinit var servers: List<MinecraftServer>
+        var servers: List<MinecraftServer> = ServerManager.serverDao.list()
 
         fun updateServerList() {
-            home.onGoingRefreshJob?.get()?.cancel()
+            home.onGoingRefreshJob.get()?.cancel()
             servers = ServerManager.serverDao.list()
         }
-
-        init {
-            updateServerList()
-        }
-
-        /*init {
-            servers = listOf(
-                MinecraftServer("first", "hello"),
-                MinecraftServer("second", "world"),
-                MinecraftServer("third", "!"),
-                MinecraftServer("this", ""),
-                MinecraftServer("is good!", ""),
-            )
-        }*/
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServerView {
             return ServerView(
@@ -131,9 +122,6 @@ class HomeFragment : Fragment() {
         }
 
         override fun getItemCount(): Int {
-            if (!::servers.isInitialized) {
-                return 0
-            }
             return servers.size
         }
 
@@ -146,14 +134,13 @@ class HomeFragment : Fragment() {
     private class ServerView(val binding: ServerItemBinding, val adapter: Adapter) :
         RecyclerView.ViewHolder(binding.root) {
 
-        lateinit var server: MinecraftServer
-
         fun bind(server: MinecraftServer) {
-            this.server = server
             binding.button.text = server.name
             setLatency(binding.root.context, binding.pingText, server.latestPing)
-            server.icon?.let { // use pack.png as default, do not clear the content
-                binding.serverIcon.setImageDrawable(it)
+            if (server.icon == null) {
+                binding.serverIcon.setImageResource(R.mipmap.pack)
+            } else {
+                binding.serverIcon.setImageBitmap(server.icon)
             }
             binding.button.setOnClickListener {
                 ServerSheetDialog(binding.root.context, server).apply {

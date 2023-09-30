@@ -63,10 +63,10 @@ class MinecraftClient(private val selector: SelectorManager, private val connect
         writeChannel.write(
             estimatedLength + estimateVarIntBinaryLength(estimatedLength) + (appendix?.size ?: 0)
         ) {
-            it.writeVarInt(estimatedLength)
+            it.putVarInt(estimatedLength)
             it.put(ID_HANDSHAKE)
-            it.writeVarInt(version)
-            it.writeVarInt(hostname.size)
+            it.putVarInt(version)
+            it.putVarInt(hostname.size)
             it.put(hostname)
             it.putShort(address.port.toShort())
             it.put(nextState)
