@@ -17,9 +17,7 @@ internal fun setLatency(context: Context, textView: TextView, latency: Int) {
         textView.setTextColor(
             MaterialColors.harmonizeWithPrimary(
                 context,
-                if (latency > 250) {
-                    Color.DKGRAY
-                } else if (latency > 200) {
+                if (latency > 200) {
                     Color.RED
                 } else if (latency > 160) {
                     Color.YELLOW

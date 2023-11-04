@@ -1,5 +1,6 @@
 package com.launium.mcping.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -11,6 +12,7 @@ import com.launium.mcping.R
 import com.launium.mcping.database.ServerManager
 import com.launium.mcping.databinding.ActivityAddServerBinding
 import com.launium.mcping.server.MinecraftServer
+import com.launium.mcping.ui.ErrorActivity
 import java.net.URI
 
 class AddServerActivity : AppCompatActivity() {
@@ -47,13 +49,13 @@ class AddServerActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
                 return true
             }
 
             R.id.save_new_server -> {
                 try {
-                    val uri = URI.create("mc://${binding.inputAddress.text}")
+                    URI.create("mc://${binding.inputAddress.text}")
                     //InetAddress.getByName(uri.host) // try resolve hostname
                 } catch (e: Exception) {
                     val stackTrace = Log.getStackTraceString(e).substringBefore('\n')
@@ -69,16 +71,22 @@ class AddServerActivity : AppCompatActivity() {
                         MinecraftServer(
                             binding.inputDisplayName.text.toString(),
                             binding.inputAddress.text.toString()
-                        )
+                        ).apply {
+                            ignoreSRVRedirect = binding.ignoreSrvRedirect.isSelected
+                        }
                     )
                     setResult(RESULT_OK)
                 } catch (e: Exception) {
                     val stackTrace = Log.getStackTraceString(e)
                     Log.e(TAG, stackTrace)
-                    Toast.makeText(binding.root.context, stackTrace, Toast.LENGTH_LONG)
-                        .show()
+                    startActivity(
+                        Intent(
+                            binding.root.context,
+                            ErrorActivity::class.java
+                        ).putExtra(ErrorActivity.KEY_ERROR, stackTrace)
+                    )
                 }
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
                 return true
             }
         }

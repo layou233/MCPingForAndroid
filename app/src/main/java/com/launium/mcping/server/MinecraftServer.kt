@@ -12,11 +12,13 @@ import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Update
+import com.launium.mcping.Application
 import com.launium.mcping.database.ServerManager
-import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.SocketOptions
+import io.ktor.network.sockets.TypeOfService
 import io.ktor.network.sockets.aSocket
-import kotlinx.coroutines.Dispatchers
+import java.io.IOException
+import java.net.InetSocketAddress
 import java.net.URI
 
 @Entity(tableName = "servers")
@@ -38,11 +40,13 @@ class MinecraftServer() {
     @ColumnInfo("motd_icon")
     var motdIcon = ""
 
+    @ColumnInfo("ignore_srv")
+    var ignoreSRVRedirect = false
+
     @Ignore
     var removed = false
 
-    @Ignore
-    var icon: Bitmap? = null
+    val icon: Bitmap?
         get() {
             if (motdIcon.isEmpty()) {
                 return null
@@ -71,23 +75,41 @@ class MinecraftServer() {
     val uri get() = "mc://$address"
 
     suspend fun connect(): MinecraftClient {
-        val serverURI = URI(uri)
-        var port = serverURI.port
-        if (port <= 0) {
-            port = 25565
+        val serverAddresses = if (ignoreSRVRedirect) {
+            val serverURI = URI(uri)
+            var port = serverURI.port
+            if (port <= 0) {
+                port = 25565
+            }
+            listOf(InetSocketAddress(serverURI.host, port))
+        } else {
+            MinecraftResolver(uri).lookup()
         }
-        val selectorManager = SelectorManager(Dispatchers.IO)
-        val socket = aSocket(selectorManager).configure {
+        val socketFactory = aSocket(Application.ktorSelectorManager).configure {
             reuseAddress = true
             reusePort = true
+            typeOfService = TypeOfService.IPTOS_LOWDELAY
             if (this is SocketOptions.TCPClientSocketOptions) {
                 keepAlive = false
                 noDelay = true
                 lingerSeconds = 10
                 socketTimeout = 10
             }
-        }.tcp().connect(serverURI.host, port)
-        return MinecraftClient(selectorManager, socket)
+        }
+
+        var lastException: Exception? = null
+        for (address in serverAddresses) {
+            try {
+                val socket = socketFactory.tcp().connect(address.hostName, address.port)
+                return MinecraftClient(socket)
+            } catch (e: Exception) {
+                lastException = e
+            }
+        }
+        throw IOException(
+            "Fail to connect to " + serverAddresses.joinToString(prefix = "[", postfix = "]"),
+            lastException
+        )
     }
 
     suspend fun requestStatus(): Boolean {

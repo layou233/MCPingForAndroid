@@ -3,9 +3,11 @@ package com.launium.mcping.ui.home
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.text.Editable
 import android.util.Log
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -13,12 +15,17 @@ import com.launium.mcping.R
 import com.launium.mcping.database.ServerManager
 import com.launium.mcping.databinding.ServerSheetBinding
 import com.launium.mcping.server.MinecraftServer
+import com.launium.mcping.ui.ErrorActivity
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class ServerSheetDialog(context: Context, private val server: MinecraftServer) :
+class ServerSheetDialog(
+    context: Context,
+    private val server: MinecraftServer,
+    private val home: Fragment?
+) :
     BottomSheetDialog(context) {
 
     companion object {
@@ -50,12 +57,16 @@ class ServerSheetDialog(context: Context, private val server: MinecraftServer) :
                             ServerManager.serverDao.delete(server)
                             server.removed = true
                             dialog.dismiss()
-                            onBackPressed()
+                            onBackPressedDispatcher.onBackPressed()
                         } catch (e: Exception) {
                             val stackTrace = Log.getStackTraceString(e)
                             Log.e(TAG, stackTrace)
-                            Toast.makeText(context, stackTrace, Toast.LENGTH_LONG)
-                                .show()
+                            home?.startActivity(
+                                Intent(
+                                    context,
+                                    ErrorActivity::class.java
+                                ).putExtra(ErrorActivity.KEY_ERROR, stackTrace)
+                            )
                         }
                     }
                     setNegativeButton(R.string.description_cancel) { dialog, _ ->
@@ -85,8 +96,12 @@ class ServerSheetDialog(context: Context, private val server: MinecraftServer) :
         } catch (e: Exception) {
             val stackTrace = Log.getStackTraceString(e)
             Log.e(TAG, stackTrace)
-            Toast.makeText(context, stackTrace, Toast.LENGTH_LONG)
-                .show()
+            home?.startActivity(
+                Intent(
+                    context,
+                    ErrorActivity::class.java
+                ).putExtra(ErrorActivity.KEY_ERROR, stackTrace)
+            )
         }
 
         ping()
@@ -106,11 +121,12 @@ class ServerSheetDialog(context: Context, private val server: MinecraftServer) :
             } catch (e: Exception) {
                 val stackTrace = Log.getStackTraceString(e)
                 Log.e(TAG, stackTrace)
-                Toast.makeText(
-                    context,
-                    stackTrace.substringBefore('\n'),
-                    Toast.LENGTH_LONG
-                ).show()
+                home?.startActivity(
+                    Intent(
+                        context,
+                        ErrorActivity::class.java
+                    ).putExtra(ErrorActivity.KEY_ERROR, stackTrace)
+                )
             }
         }
     }

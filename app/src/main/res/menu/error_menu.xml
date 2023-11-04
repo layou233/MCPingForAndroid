@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/error_copy"
+        android:icon="@drawable/ic_content_copy_24dp"
+        android:title="@string/copy"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/error_report_bug"
+        android:icon="@drawable/ic_bug_report_24dp"
+        android:title="@string/report_bug"
+        app:showAsAction="ifRoom" />
+
+</menu>

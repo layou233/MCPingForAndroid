@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".Application"
@@ -27,6 +28,9 @@
         </activity>
         <activity
             android:name=".ui.home.AddServerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.ErrorActivity"
             android:exported="false" />
     </application>
 

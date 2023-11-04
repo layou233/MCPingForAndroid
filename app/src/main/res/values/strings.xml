@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">MCPing</string>
+    <string name="app_description">Stay in sync with your favorites.</string>
+
     <string name="title_home">Home</string>
     <string name="title_discovery">Discovery</string>
     <string name="title_settings">Settings</string>
@@ -14,6 +16,11 @@
 
     <string name="server_address">Server address</string>
     <string name="server_display_name">Server display name</string>
+    <string name="ignore_srv_redirect">Ignore SRV redirect</string>
+
+    <string name="bummer">Bummer</string>
+    <string name="copy">Copy</string>
+    <string name="report_bug">Report BUG</string>
 
     <string name="description_refresh">Refresh</string>
     <string name="description_add_server">Add a new server</string>
@@ -26,4 +33,14 @@
     <string name="description_untested">Untested</string>
     <string name="description_server_icon">Server icon</string>
     <string name="description_cancel">Cancel</string>
+    <string name="description_error_message">Error message</string>
+
+    <string name="dns">DNS</string>
+    <string name="dns_discovered_system">Detected system DNS servers</string>
+    <string name="dns_no_system">No server detected.</string>
+
+    <string name="error_occurred">An unexpected error occurred when operating. Please send this to developer for help if you do not know what was happened.</string>
+    <string name="error_unknown">Unknown error</string>
+
+    <string name="license">License</string>
 </resources>

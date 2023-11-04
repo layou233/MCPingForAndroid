@@ -17,11 +17,9 @@ import com.launium.mcping.databinding.FragmentHomeBinding
 import com.launium.mcping.databinding.ServerItemBinding
 import com.launium.mcping.server.MinecraftServer
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Semaphore
-import java.util.concurrent.atomic.AtomicReference
 
 class HomeFragment : Fragment() {
 
@@ -46,8 +44,6 @@ class HomeFragment : Fragment() {
             }
         }
 
-    private var onGoingRefreshJob = AtomicReference<Job?>(null)
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -62,30 +58,28 @@ class HomeFragment : Fragment() {
         binding.container.adapter = adapter
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            lifecycleScope.launch {
+            runBlocking(lifecycleScope.coroutineContext) {
                 val semaphore = Semaphore(5)
-                adapter.servers.mapIndexed { i, server ->
+                adapter.servers.forEachIndexed { i, server ->
                     semaphore.acquire()
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        try {
-                            val changed = server.requestStatus()
-                            if (changed) {
-                                adapter.notifyItemChanged(i)
-                            }
-                        } catch (_: Exception) {
-                        }
+                    if (server.removed) {
                         semaphore.release()
+                    } else {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            try {
+                                val changed = server.requestStatus()
+                                if (changed) {
+                                    adapter.notifyItemChanged(i)
+                                }
+                            } catch (_: Exception) {
+                            }
+                            semaphore.release()
+                        }
                     }
-                }.joinAll()
-            }.let {
-                it.invokeOnCompletion {
-                    onGoingRefreshJob.set(null)
-                    _binding?.swipeRefreshLayout?.isRefreshing = false
                 }
-                onGoingRefreshJob.set(it)
             }
+            binding.swipeRefreshLayout.isRefreshing = false
         }
-        binding.swipeRefreshLayout.isRefreshing = false
 
         binding.fabAddNewServer.setOnClickListener {
             addServerActivity.launch(Intent(requireContext(), AddServerActivity::class.java))
@@ -96,8 +90,8 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        onGoingRefreshJob.get()?.cancel()
         binding.swipeRefreshLayout.isRefreshing = false
+        binding.swipeRefreshLayout.setOnRefreshListener(null)
         _binding = null
         //addServerActivity.unregister()
     }
@@ -107,7 +101,6 @@ class HomeFragment : Fragment() {
         var servers: List<MinecraftServer> = ServerManager.serverDao.list()
 
         fun updateServerList() {
-            home.onGoingRefreshJob.get()?.cancel()
             servers = ServerManager.serverDao.list()
         }
 
@@ -143,9 +136,14 @@ class HomeFragment : Fragment() {
                 binding.serverIcon.setImageBitmap(server.icon)
             }
             binding.button.setOnClickListener {
-                ServerSheetDialog(binding.root.context, server).apply {
+                ServerSheetDialog(binding.root.context, server, adapter.home).apply {
                     setOnCancelListener {
                         setLatency(binding.root.context, binding.pingText, server.latestPing)
+                        if (server.icon == null) {
+                            binding.serverIcon.setImageResource(R.mipmap.pack)
+                        } else {
+                            binding.serverIcon.setImageBitmap(server.icon)
+                        }
                         if (server.removed) {
                             adapter.updateServerList()
                             adapter.notifyItemRemoved(adapterPosition)

@@ -3,7 +3,6 @@ package com.launium.mcping.server
 import com.alibaba.fastjson2.JSON
 import com.alibaba.fastjson2.JSONObject
 import com.alibaba.fastjson2.JSONReader
-import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.InetSocketAddress
 import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.openReadChannel
@@ -19,7 +18,7 @@ private const val ID_HANDSHAKE: Byte = 0
 private const val ID_STATUS: Byte = 0
 private const val ID_PING: Byte = 1
 
-class MinecraftClient(private val selector: SelectorManager, private val connection: Socket) :
+class MinecraftClient(private val connection: Socket) :
     Closeable {
 
     private val readChannel = connection.openReadChannel()
@@ -78,7 +77,6 @@ class MinecraftClient(private val selector: SelectorManager, private val connect
     override fun close() {
         writeChannel.flush()
         connection.close()
-        selector.close()
     }
 
     class UnexpectedPacketException(wanted: Byte, got: Byte) : Exception("wanted $wanted, got $got")

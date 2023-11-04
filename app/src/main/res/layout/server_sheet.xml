@@ -102,7 +102,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="8dp"
-            android:backgroundTint="#EDE7F6"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/server_sheet_address_layout">
@@ -123,6 +122,7 @@
                 android:layout_marginStart="42dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/description_latency"
+                android:textAppearance="?attr/textAppearanceLabelLarge"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -134,6 +134,7 @@
                 android:layout_marginStart="42dp"
                 android:layout_marginBottom="8dp"
                 android:text="@string/description_pinging"
+                android:textAppearance="?attr/textAppearanceBody1"
                 android:textSize="24sp" />
 
             <Button
@@ -194,6 +195,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:insetLeft="8dp"
             android:insetRight="8dp"
             android:text="@string/server_sheet_copy_icon"
