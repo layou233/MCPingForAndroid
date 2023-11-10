@@ -38,6 +38,9 @@
     <string name="dns">DNS</string>
     <string name="dns_discovered_system">Detected system DNS servers</string>
     <string name="dns_no_system">No server detected.</string>
+    <string name="dns_srv_resolver">SRV resolver</string>
+    <string name="dns_srv_resolver_system_api">System API (Android 10+)</string>
+    <string name="dns_srv_resolver_compatible">Compatible</string>
 
     <string name="error_occurred">An unexpected error occurred when operating. Please send this to developer for help if you do not know what was happened.</string>
     <string name="error_unknown">Unknown error</string>

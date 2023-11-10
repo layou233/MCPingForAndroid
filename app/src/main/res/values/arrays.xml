@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="srv_resolver">
+        <item>@string/dns_srv_resolver_compatible</item>
+        <item>@string/dns_srv_resolver_system_api</item>
+    </array>
+</resources>

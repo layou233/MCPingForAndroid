@@ -72,7 +72,7 @@ class AddServerActivity : AppCompatActivity() {
                             binding.inputDisplayName.text.toString(),
                             binding.inputAddress.text.toString()
                         ).apply {
-                            ignoreSRVRedirect = binding.ignoreSrvRedirect.isSelected
+                            ignoreSRVRedirect = binding.ignoreSrvRedirect.isChecked
                         }
                     )
                     setResult(RESULT_OK)
