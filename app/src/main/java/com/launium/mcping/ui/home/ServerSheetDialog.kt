@@ -24,7 +24,8 @@ import kotlinx.coroutines.launch
 class ServerSheetDialog(
     context: Context,
     private val server: MinecraftServer,
-    private val home: Fragment?
+    private val home: Fragment?,
+    val isLocal: Boolean = true
 ) :
     BottomSheetDialog(context) {
 
@@ -46,33 +47,37 @@ class ServerSheetDialog(
             setLatency(context, binding.serverSheetLatencyText, server.latestPing)
             server.icon?.let { binding.serverSheetImage.setImageBitmap(it) }
             binding.serverSheetTestLatency.setOnClickListener { ping() }
-            binding.serverSheetDeleteServer.setOnClickListener {
-                MaterialAlertDialogBuilder(context).apply {
-                    setTitle(R.string.title_confirm_delete)
-                    setMessage(R.string.dialog_delete)
-                    setIcon(R.drawable.ic_delete_forever_24dp)
-                    setCancelable(true)
-                    setPositiveButton(R.string.description_delete) { dialog, _ ->
-                        try {
-                            ServerManager.serverDao.delete(server)
-                            server.removed = true
-                            dialog.dismiss()
-                            onBackPressedDispatcher.onBackPressed()
-                        } catch (e: Exception) {
-                            val stackTrace = Log.getStackTraceString(e)
-                            Log.e(TAG, stackTrace)
-                            home?.startActivity(
-                                Intent(
-                                    context,
-                                    ErrorActivity::class.java
-                                ).putExtra(ErrorActivity.KEY_ERROR, stackTrace)
-                            )
+            if (isLocal) {
+                binding.serverSheetDeleteServer.setOnClickListener {
+                    MaterialAlertDialogBuilder(context).apply {
+                        setTitle(R.string.title_confirm_delete)
+                        setMessage(R.string.dialog_delete)
+                        setIcon(R.drawable.ic_delete_forever_24dp)
+                        setCancelable(true)
+                        setPositiveButton(R.string.description_delete) { dialog, _ ->
+                            try {
+                                ServerManager.serverDao.delete(server)
+                                server.removed = true
+                                dialog.dismiss()
+                                onBackPressedDispatcher.onBackPressed()
+                            } catch (e: Exception) {
+                                val stackTrace = Log.getStackTraceString(e)
+                                Log.e(TAG, stackTrace)
+                                home?.startActivity(
+                                    Intent(
+                                        context,
+                                        ErrorActivity::class.java
+                                    ).putExtra(ErrorActivity.KEY_ERROR, stackTrace)
+                                )
+                            }
                         }
-                    }
-                    setNegativeButton(R.string.description_cancel) { dialog, _ ->
-                        dialog.cancel()
-                    }
-                }.show()
+                        setNegativeButton(R.string.description_cancel) { dialog, _ ->
+                            dialog.cancel()
+                        }
+                    }.show()
+                }
+            } else {
+                binding.serverSheetDeleteServer.isEnabled = false
             }
             binding.serverSheetShareServer.setOnClickListener {
                 val clipboardManager =

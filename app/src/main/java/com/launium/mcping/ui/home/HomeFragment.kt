@@ -50,10 +50,13 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         // set recycler view
-        val linearLayoutManager = LinearLayoutManager(requireContext())
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        binding.container.layoutManager = linearLayoutManager
-        binding.container.adapter = adapter
+        binding.container.layoutManager = LinearLayoutManager(requireContext()).apply {
+            orientation = LinearLayoutManager.VERTICAL
+        }
+        lifecycleScope.launch(Dispatchers.IO) {
+            adapter.updateServerList()
+            binding.container.adapter = adapter
+        }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             lifecycleScope.launch(Dispatchers.Default) {
@@ -78,6 +81,7 @@ class HomeFragment : Fragment() {
                 }.joinAll()
             }.invokeOnCompletion {
                 _binding?.swipeRefreshLayout?.isRefreshing = false
+                _binding?.swipeRefreshLayout?.clearAnimation()
             }
         }
 
@@ -104,9 +108,9 @@ class HomeFragment : Fragment() {
         //addServerActivity.unregister()
     }
 
-    private class Adapter(val home: HomeFragment) : RecyclerView.Adapter<ServerView>() {
+    private class Adapter(val home: Fragment) : RecyclerView.Adapter<ServerView>() {
 
-        var servers: List<MinecraftServer> = ServerManager.serverDao.list()
+        var servers: List<MinecraftServer> = listOf()
 
         fun updateServerList() {
             servers = ServerManager.serverDao.list()
