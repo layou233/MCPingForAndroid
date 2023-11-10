@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.launium.mcping.Application
 import com.launium.mcping.R
@@ -63,6 +64,22 @@ class SettingsFragment : Fragment() {
                     dnsListBuilder.appendLine(dns)
                 }
                 binding.systemDnsList.text = dnsListBuilder.toString()
+            }
+        }
+        binding.maxConcurrentPings.editText!!.text =
+            Editable.Factory.getInstance().newEditable(Preferences.maxConcurrentPings.toString())
+        binding.maxConcurrentPings.editText!!.addTextChangedListener {
+            val newConcurrency = it.toString().toIntOrNull()
+            if (newConcurrency != null && newConcurrency > 0) {
+                Preferences.maxConcurrentPings = newConcurrency
+            } else {
+                binding.maxConcurrentPings.editText!!.text = Editable.Factory.getInstance()
+                    .newEditable(Preferences.maxConcurrentPings.toString())
+                MaterialAlertDialogBuilder(requireContext()).apply {
+                    setTitle(R.string.illegal_concurrency_number)
+                    setMessage(R.string.dialog_illegal_concurrency_number)
+                    setCancelable(true)
+                }.show()
             }
         }
         binding.titleCard.setOnClickListener {

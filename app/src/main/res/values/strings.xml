@@ -9,6 +9,7 @@
     <string name="title_confirm_delete">Confirm delete</string>
 
     <string name="dialog_delete">Are you sure you want to remove this server? It will be lost forever! (A long time!)</string>
+    <string name="dialog_illegal_concurrency_number">The concurrency number cannot be an unnatural number. Please check again.</string>
 
     <string name="home_title">Servers</string>
     <string name="server_sheet_title">Server details</string>
@@ -41,6 +42,10 @@
     <string name="dns_srv_resolver">SRV resolver</string>
     <string name="dns_srv_resolver_system_api">System API (Android 10+)</string>
     <string name="dns_srv_resolver_compatible">Compatible</string>
+
+    <string name="concurrency">Concurrency</string>
+    <string name="max_concurrent_pings">Maximum concurrent pings</string>
+    <string name="illegal_concurrency_number">Illegal concurrency number</string>
 
     <string name="error_occurred">An unexpected error occurred when operating. Please send this to developer for help if you do not know what was happened.</string>
     <string name="error_unknown">Unknown error</string>

@@ -9,6 +9,7 @@ private const val PREFERENCE_ID = "$PACKAGE_ID.SETTINGS"
 
 // preference keys
 private const val SRV_RESOLVER = "SRV_RESOLVER"
+private const val MAX_CONCURRENT_PINGS = "MAX_CONCURRENT_PINGS"
 
 object Preferences {
 
@@ -38,6 +39,23 @@ object Preferences {
                 sharedPreferences.edit().remove(SRV_RESOLVER).apply()
             } else {
                 sharedPreferences.edit().putInt(SRV_RESOLVER, srvResolver.ordinal).apply()
+            }
+        }
+
+    var maxConcurrentPings: Int
+        get() {
+            val stored = sharedPreferences.getInt(MAX_CONCURRENT_PINGS, -1)
+            return if (stored > 0) {
+                stored
+            } else {
+                5
+            }
+        }
+        set(value) {
+            if (value == 5) { // set to default
+                sharedPreferences.edit().remove(MAX_CONCURRENT_PINGS).apply()
+            } else if (value > 0) {
+                sharedPreferences.edit().putInt(MAX_CONCURRENT_PINGS, value).apply()
             }
         }
 

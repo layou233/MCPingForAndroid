@@ -16,9 +16,10 @@ import com.launium.mcping.database.ServerManager
 import com.launium.mcping.databinding.FragmentHomeBinding
 import com.launium.mcping.databinding.ServerItemBinding
 import com.launium.mcping.server.MinecraftServer
+import com.launium.mcping.ui.settings.Preferences
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Semaphore
 
 class HomeFragment : Fragment() {
@@ -31,23 +32,20 @@ class HomeFragment : Fragment() {
 
     private var adapter = Adapter(this)
 
-    private val addServerActivity =
-        registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) {
-            when (it.resultCode) {
-                Activity.RESULT_OK -> {
-                    val newPosition = adapter.servers.size
-                    adapter.updateServerList()
-                    adapter.notifyItemInserted(newPosition)
-                }
+    private val addServerActivity = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        when (it.resultCode) {
+            Activity.RESULT_OK -> {
+                val newPosition = adapter.servers.size
+                adapter.updateServerList()
+                adapter.notifyItemInserted(newPosition)
             }
         }
+    }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
@@ -58,12 +56,13 @@ class HomeFragment : Fragment() {
         binding.container.adapter = adapter
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            runBlocking(lifecycleScope.coroutineContext) {
-                val semaphore = Semaphore(5)
-                adapter.servers.forEachIndexed { i, server ->
+            lifecycleScope.launch(Dispatchers.Default) {
+                val semaphore = Semaphore(Preferences.maxConcurrentPings)
+                adapter.servers.mapIndexedNotNull { i, server ->
                     semaphore.acquire()
                     if (server.removed) {
                         semaphore.release()
+                        null
                     } else {
                         lifecycleScope.launch(Dispatchers.IO) {
                             try {
@@ -76,9 +75,10 @@ class HomeFragment : Fragment() {
                             semaphore.release()
                         }
                     }
-                }
+                }.joinAll()
+            }.invokeOnCompletion {
+                _binding?.swipeRefreshLayout?.isRefreshing = false
             }
-            binding.swipeRefreshLayout.isRefreshing = false
         }
 
         binding.fabAddNewServer.setOnClickListener {
@@ -88,10 +88,18 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        binding.swipeRefreshLayout.isRefreshing = false
+        binding.swipeRefreshLayout.clearAnimation()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+
         binding.swipeRefreshLayout.isRefreshing = false
-        binding.swipeRefreshLayout.setOnRefreshListener(null)
+        binding.swipeRefreshLayout.clearAnimation()
         _binding = null
         //addServerActivity.unregister()
     }
@@ -107,9 +115,7 @@ class HomeFragment : Fragment() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServerView {
             return ServerView(
                 ServerItemBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
+                    LayoutInflater.from(parent.context), parent, false
                 ), this
             )
         }
