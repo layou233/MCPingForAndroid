@@ -55,7 +55,9 @@ class HomeFragment : Fragment() {
         }
         lifecycleScope.launch(Dispatchers.IO) {
             adapter.updateServerList()
-            binding.container.adapter = adapter
+            activity?.runOnUiThread {
+                binding.container.adapter = adapter
+            }
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -75,7 +77,9 @@ class HomeFragment : Fragment() {
                             }
                             semaphore.release()
                             if (changed) {
-                                adapter.notifyItemChanged(i)
+                                activity?.runOnUiThread {
+                                    adapter.notifyItemChanged(i)
+                                }
                                 ServerManager.serverDao.update(server)
                             }
                         }

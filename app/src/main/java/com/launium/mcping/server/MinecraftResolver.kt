@@ -14,6 +14,7 @@ import io.ktor.utils.io.core.Input
 import io.ktor.utils.io.core.readShort
 import io.ktor.utils.io.core.readTextExactBytes
 import io.ktor.utils.io.core.readUShort
+import io.ktor.utils.io.errors.IOException
 import io.ktor.utils.io.streams.asInput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -101,6 +102,7 @@ class MinecraftResolver(uri: String) {
         return results
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     @RequiresApi(Build.VERSION_CODES.Q)
     private suspend fun querySRVPlatform(serviceName: String) = withContext(Dispatchers.IO) {
         return@withContext suspendCoroutine { continuation ->
@@ -115,13 +117,19 @@ class MinecraftResolver(uri: String) {
 
                     override fun onAnswer(answer: ByteArray, rCode: Int) {
                         when (rCode) {
-                            0 -> continuation.resume(
-                                parseSRVResponse(
-                                    ByteArrayInputStream(answer).asInput(),
-                                    serviceName,
-                                    verifyTransactionID = false
+                            0 -> try {
+                                continuation.resume(
+                                    parseSRVResponse(
+                                        ByteArrayInputStream(answer).asInput(),
+                                        serviceName,
+                                        verifyTransactionID = false
+                                    )
                                 )
-                            ) // 0 stands for NO_ERROR
+                            } catch (e: Exception) {
+                                continuation.resumeWithException(IOException("Fail to parse SRV response: [00000000 ${
+                                    answer.joinToString { it.toHexString() + " " }
+                                }]", e))
+                            } // 0 stands for NO_ERROR
 
                             3 -> continuation.resume(null) // NX_DOMAIN
 

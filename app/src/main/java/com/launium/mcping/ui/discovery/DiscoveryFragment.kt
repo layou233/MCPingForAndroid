@@ -25,8 +25,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.withContext
 import java.net.URL
+import java.util.Locale
 
 private const val SERVER_LIST_URL = "https://www.jsip.club/api/ajax.php?request=get_line_list"
 
@@ -104,10 +104,11 @@ class DiscoveryFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 adapter.servers = (resultObject["data"] as JSONArray).map {
                     val serverObject = it as JSONObject
                     return@map MinecraftServer(
-                        serverObject["name"] as String, serverObject["address"] as String
+                        serverObject["name"] as String,
+                        (serverObject["address"] as String).lowercase(Locale.getDefault())
                     )
                 }
-                withContext(Dispatchers.Main) {
+                activity?.runOnUiThread {
                     adapter.notifyDataSetChanged()
                 }
                 val semaphore = Semaphore(Preferences.maxConcurrentPings)
@@ -125,7 +126,9 @@ class DiscoveryFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                             }
                             semaphore.release()
                             if (changed) {
-                                adapter.notifyItemChanged(i)
+                                activity?.runOnUiThread {
+                                    adapter.notifyItemChanged(i)
+                                }
                             }
                         }
                     }
