@@ -48,11 +48,11 @@ object Preferences {
             return if (stored > 0) {
                 stored
             } else {
-                5
+                16
             }
         }
         set(value) {
-            if (value == 5) { // set to default
+            if (value == 16) { // set to default
                 sharedPreferences.edit().remove(MAX_CONCURRENT_PINGS).apply()
             } else if (value > 0) {
                 sharedPreferences.edit().putInt(MAX_CONCURRENT_PINGS, value).apply()
