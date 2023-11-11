@@ -8,6 +8,8 @@ import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
 import io.ktor.utils.io.readFully
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.Closeable
 import kotlin.system.measureTimeMillis
 
@@ -24,7 +26,7 @@ class MinecraftClient(private val connection: Socket) :
     private val readChannel = connection.openReadChannel()
     private val writeChannel = connection.openWriteChannel()
 
-    suspend fun requestStatus(version: Int): MinecraftServerStatus {
+    suspend fun requestStatus(version: Int): MinecraftServerStatus = withContext(Dispatchers.IO) {
         // https://wiki.vg/Protocol#Status_Request
         sendHandshake(version, NEXT_STATE_STATUS, byteArrayOf(1, ID_STATUS))
 
@@ -51,28 +53,30 @@ class MinecraftClient(private val connection: Socket) :
             readChannel.awaitContent()
         }
 
-        return MinecraftServerStatus(serverFavicon, latency)
+        return@withContext MinecraftServerStatus(serverFavicon, latency)
     }
 
-    private suspend fun sendHandshake(version: Int, nextState: Byte, appendix: ByteArray?) {
-        val address = connection.remoteAddress as InetSocketAddress
-        val hostname = address.hostname.toByteArray()
-        val estimatedLength =
-            1 + estimateVarIntBinaryLength(version) + estimateVarIntBinaryLength(hostname.size) + hostname.size + 2 + 1
-        writeChannel.write(
-            estimatedLength + estimateVarIntBinaryLength(estimatedLength) + (appendix?.size ?: 0)
-        ) {
-            it.putVarInt(estimatedLength)
-            it.put(ID_HANDSHAKE)
-            it.putVarInt(version)
-            it.putVarInt(hostname.size)
-            it.put(hostname)
-            it.putShort(address.port.toShort())
-            it.put(nextState)
-            appendix?.let { _ -> it.put(appendix) }
+    private suspend fun sendHandshake(version: Int, nextState: Byte, appendix: ByteArray?) =
+        withContext(Dispatchers.IO) {
+            val address = connection.remoteAddress as InetSocketAddress
+            val hostname = address.hostname.toByteArray()
+            val estimatedLength =
+                1 + estimateVarIntBinaryLength(version) + estimateVarIntBinaryLength(hostname.size) + hostname.size + 2 + 1
+            writeChannel.write(
+                estimatedLength + estimateVarIntBinaryLength(estimatedLength) + (appendix?.size
+                    ?: 0)
+            ) {
+                it.putVarInt(estimatedLength)
+                it.put(ID_HANDSHAKE)
+                it.putVarInt(version)
+                it.putVarInt(hostname.size)
+                it.put(hostname)
+                it.putShort(address.port.toShort())
+                it.put(nextState)
+                appendix?.let { _ -> it.put(appendix) }
+            }
+            writeChannel.flush()
         }
-        writeChannel.flush()
-    }
 
     override fun close() {
         writeChannel.flush()

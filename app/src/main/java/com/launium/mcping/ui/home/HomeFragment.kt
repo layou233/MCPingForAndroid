@@ -68,14 +68,16 @@ class HomeFragment : Fragment() {
                         null
                     } else {
                         lifecycleScope.launch(Dispatchers.IO) {
-                            try {
-                                val changed = server.requestStatus()
-                                if (changed) {
-                                    adapter.notifyItemChanged(i)
-                                }
+                            val changed = try {
+                                server.requestStatus()
                             } catch (_: Exception) {
+                                false
                             }
                             semaphore.release()
+                            if (changed) {
+                                adapter.notifyItemChanged(i)
+                                ServerManager.serverDao.update(server)
+                            }
                         }
                     }
                 }.joinAll()

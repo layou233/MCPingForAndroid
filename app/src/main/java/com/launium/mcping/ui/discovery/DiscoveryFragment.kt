@@ -118,14 +118,15 @@ class DiscoveryFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                         null
                     } else {
                         lifecycleScope.launch(Dispatchers.IO) {
-                            try {
-                                val changed = server.requestStatus()
-                                if (changed) {
-                                    adapter.notifyItemChanged(i)
-                                }
+                            val changed = try {
+                                server.requestStatus()
                             } catch (_: Exception) {
+                                false
                             }
                             semaphore.release()
+                            if (changed) {
+                                adapter.notifyItemChanged(i)
+                            }
                         }
                     }
                 }.joinAll()

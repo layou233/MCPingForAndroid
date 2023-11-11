@@ -121,6 +121,9 @@ class ServerSheetDialog(
                 if (changed) {
                     setLatency(context, binding.serverSheetLatencyText, server.latestPing)
                     server.icon?.let { binding.serverSheetImage.setImageBitmap(it) }
+                    if (isLocal) {
+                        ServerManager.serverDao.update(server)
+                    }
                 }
             } catch (_: CancellationException) {
             } catch (e: Exception) {

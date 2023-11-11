@@ -2,6 +2,7 @@ package com.launium.mcping.server
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Base64
 import androidx.room.ColumnInfo
 import androidx.room.Delete
@@ -13,10 +14,11 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Update
 import com.launium.mcping.Application
-import com.launium.mcping.database.ServerManager
 import io.ktor.network.sockets.SocketOptions
 import io.ktor.network.sockets.TypeOfService
 import io.ktor.network.sockets.aSocket
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.URI
@@ -72,9 +74,14 @@ class MinecraftServer() {
         fun delete(server: MinecraftServer)
     }
 
-    val uri get() = "mc://$address"
+    val uri
+        get() = "mc://$address${
+            if (name.isNotBlank()) {
+                "/#${Uri.encode(name)}"
+            } else ""
+        }"
 
-    suspend fun connect(): MinecraftClient {
+    suspend fun connect(): MinecraftClient = withContext(Dispatchers.IO) {
         val serverAddresses = if (ignoreSRVRedirect) {
             val serverURI = URI(uri)
             var port = serverURI.port
@@ -101,7 +108,7 @@ class MinecraftServer() {
         for (address in serverAddresses) {
             try {
                 val socket = socketFactory.tcp().connect(address.hostName, address.port)
-                return MinecraftClient(socket)
+                return@withContext MinecraftClient(socket)
             } catch (e: Exception) {
                 lastException = e
             }
@@ -136,9 +143,6 @@ class MinecraftServer() {
             }
         }
 
-        if (changed) {
-            ServerManager.serverDao.update(this)
-        }
         return changed
     }
 
