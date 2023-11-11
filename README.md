@@ -6,7 +6,7 @@
 [![Releases](https://img.shields.io/github/downloads/layou233/MCPingForAndroid/total.svg)](https://github.com/layou233/MCPingForAndroid/releases)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-orange.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-*An ZBProject application.*
+*A ZBProject application.*
 
 🚀 Fast and simple mobile APP that simulates your Minecraft server list, written in Kotlin.
 
@@ -21,7 +21,7 @@ Stay in sync with your favorites.
  - [x] 📦 Tailored high performance and lightweight Minecraft network protocol framework
  - [x] 💻 Clean and colorful user interface designed completely in Material Design 3, with full dark mode support
  - [x] 🔮 Cross-application share link preview
- - [x] 📉 Minimized ditribution size with no unused components included.
+ - [x] 📉 Minimized distribution size with no unused components included.
  - And more...
 
 #### **[Join Official Telegram Group](https://t.me/launium)**  
