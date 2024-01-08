@@ -1,11 +1,10 @@
 package com.launium.mcping.ui
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.launium.mcping.server.MinecraftServer
 import com.launium.mcping.ui.home.ServerSheetDialog
 
-class ServerURIActivity : AppCompatActivity() {
+class ServerURIActivity : AbstractActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

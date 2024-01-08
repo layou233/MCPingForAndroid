@@ -1,7 +1,6 @@
 package com.launium.mcping.ui
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -10,7 +9,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.launium.mcping.R
 import com.launium.mcping.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AbstractActivity() {
 
     private lateinit var binding: ActivityMainBinding
 

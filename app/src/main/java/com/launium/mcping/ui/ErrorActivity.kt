@@ -10,12 +10,10 @@ import android.text.Editable
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
 import com.launium.mcping.R
 import com.launium.mcping.databinding.ActivityErrorBinding
 
-class ErrorActivity : AppCompatActivity() {
+class ErrorActivity : AbstractActivity() {
 
     companion object {
         const val KEY_ERROR = "error"
@@ -37,12 +35,8 @@ class ErrorActivity : AppCompatActivity() {
         supportActionBar?.let {
             it.setTitle(R.string.bummer)
             it.setDisplayHomeAsUpEnabled(true)
-            it.setHomeAsUpIndicator(
-                AppCompatResources.getDrawable(
-                    this, R.drawable.ic_arrow_back_24dp
-                )
-            )
         }
+        setupHomeButton()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

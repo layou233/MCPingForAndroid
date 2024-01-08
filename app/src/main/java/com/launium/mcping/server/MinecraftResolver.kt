@@ -14,13 +14,12 @@ import io.ktor.utils.io.core.Input
 import io.ktor.utils.io.core.readShort
 import io.ktor.utils.io.core.readTextExactBytes
 import io.ktor.utils.io.core.readUShort
-import io.ktor.utils.io.errors.IOException
 import io.ktor.utils.io.streams.asInput
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayInputStream
+import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.SocketException
 import java.net.URI
@@ -111,13 +110,13 @@ class MinecraftResolver(uri: String) {
                 CLASS_IN.toInt(),
                 TYPE_SRV.toInt(),
                 DnsResolver.FLAG_EMPTY,
-                { GlobalScope.launch(Dispatchers.IO) { it.run() } },
+                Dispatchers.IO.asExecutor(),
                 null,
                 object : DnsResolver.Callback<ByteArray> {
 
                     override fun onAnswer(answer: ByteArray, rCode: Int) {
                         when (rCode) {
-                            0 -> try {
+                            0 -> try { // 0 stands for NO_ERROR
                                 continuation.resume(
                                     parseSRVResponse(
                                         ByteArrayInputStream(answer).asInput(),
@@ -129,7 +128,7 @@ class MinecraftResolver(uri: String) {
                                 continuation.resumeWithException(IOException("Fail to parse SRV response: [00000000 ${
                                     answer.joinToString { it.toHexString() + " " }
                                 }]", e))
-                            } // 0 stands for NO_ERROR
+                            }
 
                             3 -> continuation.resume(null) // NX_DOMAIN
 

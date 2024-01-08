@@ -6,16 +6,15 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
 import com.launium.mcping.R
 import com.launium.mcping.database.ServerManager
 import com.launium.mcping.databinding.ActivityAddServerBinding
 import com.launium.mcping.server.MinecraftServer
+import com.launium.mcping.ui.AbstractActivity
 import com.launium.mcping.ui.ErrorActivity
 import java.net.URI
 
-class AddServerActivity : AppCompatActivity() {
+class AddServerActivity : AbstractActivity() {
 
     companion object {
         private const val TAG = "AddServerActivity"
@@ -32,13 +31,8 @@ class AddServerActivity : AppCompatActivity() {
         supportActionBar?.let {
             it.setTitle(R.string.title_add_server)
             it.setDisplayHomeAsUpEnabled(true)
-            it.setHomeAsUpIndicator(
-                AppCompatResources.getDrawable(
-                    this@AddServerActivity, R.drawable.ic_arrow_back_24dp
-                )
-            )
-            //it.setHomeButtonEnabled(true)
         }
+        setupHomeButton()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
