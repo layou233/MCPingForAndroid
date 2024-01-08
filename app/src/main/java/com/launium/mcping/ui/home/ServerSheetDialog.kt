@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.launium.mcping.R
+import com.launium.mcping.common.minecraft.parseMinecraftColor
 import com.launium.mcping.database.ServerManager
 import com.launium.mcping.databinding.ServerSheetBinding
 import com.launium.mcping.server.MinecraftServer
@@ -46,6 +47,7 @@ class ServerSheetDialog(
                 Editable.Factory.getInstance().newEditable(server.address)
             setLatency(context, binding.serverSheetLatencyText, server.latestPing)
             server.icon?.let { binding.serverSheetImage.setImageBitmap(it) }
+            binding.serverSheetMotd.text = parseMinecraftColor(server.description)
             binding.serverSheetTestLatency.setOnClickListener { ping() }
             if (isLocal) {
                 binding.serverSheetDeleteServer.setOnClickListener {
@@ -121,9 +123,11 @@ class ServerSheetDialog(
                 if (changed) {
                     setLatency(context, binding.serverSheetLatencyText, server.latestPing)
                     server.icon?.let { binding.serverSheetImage.setImageBitmap(it) }
+                    binding.serverSheetMotd.text = parseMinecraftColor(server.description)
                     if (isLocal) {
                         ServerManager.serverDao.update(server)
                     }
+                    Log.d(TAG, "Loaded MOTD: " + server.description)
                 }
             } catch (_: CancellationException) {
             } catch (e: Exception) {

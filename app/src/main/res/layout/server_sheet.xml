@@ -77,8 +77,8 @@
             android:layout_width="match_parent"
             android:layout_height="64dp"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginTop="10dp"
+            android:layout_marginEnd="8dp"
             android:hint="@string/server_address"
             android:saveEnabled="false"
             app:helperText="@string/server_address"
@@ -96,7 +96,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/server_sheet_latency_card"
+            android:id="@+id/server_sheet_motd_card"
             android:layout_width="0dp"
             android:layout_height="72dp"
             android:layout_gravity="center_horizontal"
@@ -106,6 +106,34 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/server_sheet_address_layout">
+
+            <TextView
+                android:id="@+id/server_sheet_motd"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_minecraft"
+                android:backgroundTint="#EEAAAAAA"
+                android:backgroundTintMode="multiply"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="8dp"
+                android:text="@string/description_pinging"
+                android:textColor="#AAAAAA"
+                android:textIsSelectable="true"
+                android:textSize="14sp" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/server_sheet_latency_card"
+            android:layout_width="0dp"
+            android:layout_height="72dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/server_sheet_motd_card">
 
             <ImageView
                 android:layout_width="wrap_content"

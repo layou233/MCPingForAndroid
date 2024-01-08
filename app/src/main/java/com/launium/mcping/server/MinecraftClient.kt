@@ -1,6 +1,7 @@
 package com.launium.mcping.server
 
 import com.alibaba.fastjson2.JSON
+import com.alibaba.fastjson2.JSONArray
 import com.alibaba.fastjson2.JSONObject
 import com.alibaba.fastjson2.JSONReader
 import io.ktor.network.sockets.InetSocketAddress
@@ -41,6 +42,15 @@ class MinecraftClient(private val connection: Socket) :
         val statusObject =
             JSON.parse(statusArray, JSONReader.Feature.InitStringFieldAsEmpty) as JSONObject
         val serverFavicon = statusObject["favicon"] as String
+        val serverDescriptionObject = statusObject["description"] as JSONObject
+        var serverDescriptionText = serverDescriptionObject["text"] as String
+        serverDescriptionObject["extra"]?.let {
+            (it as JSONArray).forEach { item ->
+                if (item is JSONObject) {
+                    serverDescriptionText += item["text"] as String
+                }
+            }
+        }
 
         // https://wiki.vg/Server_List_Ping#Ping_Request
         writeChannel.write(10) {
@@ -53,7 +63,7 @@ class MinecraftClient(private val connection: Socket) :
             readChannel.awaitContent()
         }
 
-        return@withContext MinecraftServerStatus(serverFavicon, latency)
+        return@withContext MinecraftServerStatus(serverFavicon, latency, serverDescriptionText)
     }
 
     private suspend fun sendHandshake(version: Int, nextState: Byte, appendix: ByteArray?) =

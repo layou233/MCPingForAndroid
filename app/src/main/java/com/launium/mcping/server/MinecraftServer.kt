@@ -46,6 +46,9 @@ class MinecraftServer() {
     var ignoreSRVRedirect = false
 
     @Ignore
+    var description = ""
+
+    @Ignore
     var removed = false
 
     val icon: Bitmap?
@@ -140,6 +143,12 @@ class MinecraftServer() {
             if (it != motdIcon) {
                 changed = true
                 motdIcon = it
+            }
+        }
+        status.description.let {
+            if (it != description) {
+                changed = true
+                description = it
             }
         }
 
