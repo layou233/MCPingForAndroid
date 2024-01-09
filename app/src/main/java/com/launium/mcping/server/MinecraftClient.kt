@@ -42,14 +42,20 @@ class MinecraftClient(private val connection: Socket) :
         val statusObject =
             JSON.parse(statusArray, JSONReader.Feature.InitStringFieldAsEmpty) as JSONObject
         val serverFavicon = statusObject["favicon"] as String
-        val serverDescriptionObject = statusObject["description"] as JSONObject
-        var serverDescriptionText = serverDescriptionObject["text"] as String
-        serverDescriptionObject["extra"]?.let {
-            (it as JSONArray).forEach { item ->
-                if (item is JSONObject) {
-                    serverDescriptionText += item["text"] as String
+        var serverDescriptionText = ""
+        when (val description = statusObject["description"]) {
+            is JSONObject -> {
+                serverDescriptionText = description["text"] as String
+                description["extra"]?.let {
+                    (it as JSONArray).forEach { item ->
+                        if (item is JSONObject) {
+                            serverDescriptionText += item["text"] as String
+                        }
+                    }
                 }
             }
+
+            is String -> serverDescriptionText = description
         }
 
         // https://wiki.vg/Server_List_Ping#Ping_Request

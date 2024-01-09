@@ -91,6 +91,7 @@
                 android:layout_height="wrap_content"
                 android:editable="false"
                 android:text="mc.example.com"
+                android:textIsSelectable="true"
                 tools:ignore="HardcodedText" />
 
         </com.google.android.material.textfield.TextInputLayout>
