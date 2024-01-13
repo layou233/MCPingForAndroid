@@ -14,6 +14,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Update
 import com.launium.mcping.Application
+import com.launium.mcping.common.compareAndSet
 import io.ktor.network.sockets.SocketOptions
 import io.ktor.network.sockets.TypeOfService
 import io.ktor.network.sockets.aSocket
@@ -47,6 +48,18 @@ class MinecraftServer() {
 
     @Ignore
     var description = ""
+
+    @Ignore
+    var version = ""
+
+    @Ignore
+    var online = 0
+
+    @Ignore
+    var maxOnline = 0
+
+    @Ignore
+    var players = listOf<MinecraftServerStatus.Player>()
 
     @Ignore
     var removed = false
@@ -132,25 +145,15 @@ class MinecraftServer() {
         }
         client.close()
 
-        var changed = false
-        status.latency.toInt().let {
-            if (it != latestPing) {
-                changed = true
-                latestPing = it
-            }
-        }
-        status.favicon.let {
-            if (it != motdIcon) {
-                changed = true
-                motdIcon = it
-            }
-        }
-        status.description.let {
-            if (it != description) {
-                changed = true
-                description = it
-            }
-        }
+        val changed = listOf(
+            this::latestPing.compareAndSet(status.latency.toInt()),
+            this::motdIcon.compareAndSet(status.favicon),
+            this::description.compareAndSet(status.description),
+            this::version.compareAndSet(status.version),
+            this::online.compareAndSet(status.online),
+            this::maxOnline.compareAndSet(status.maxOnline),
+            this::players.compareAndSet(status.players),
+        ).find { it } ?: false
 
         return changed
     }

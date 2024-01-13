@@ -31,6 +31,8 @@
     <string name="description_latency">Latency</string>
     <string name="description_ping">Ping</string>
     <string name="description_pinging">Pinging…</string>
+    <string name="description_online">Online</string>
+    <string name="description_version">Version</string>
     <string name="description_untested">Untested</string>
     <string name="description_server_icon">Server icon</string>
     <string name="description_cancel">Cancel</string>

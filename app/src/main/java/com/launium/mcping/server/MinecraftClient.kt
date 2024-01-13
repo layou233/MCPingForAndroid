@@ -21,8 +21,7 @@ private const val ID_HANDSHAKE: Byte = 0
 private const val ID_STATUS: Byte = 0
 private const val ID_PING: Byte = 1
 
-class MinecraftClient(private val connection: Socket) :
-    Closeable {
+class MinecraftClient(private val connection: Socket) : Closeable {
 
     private val readChannel = connection.openReadChannel()
     private val writeChannel = connection.openWriteChannel()
@@ -57,6 +56,28 @@ class MinecraftClient(private val connection: Socket) :
 
             is String -> serverDescriptionText = description
         }
+        var serverOnline = 0
+        var serverMaxOnline = 0
+        var serverPlayers = listOf<MinecraftServerStatus.Player>()
+        when (val serverPlayersObject = statusObject["players"]) {
+            is JSONObject -> {
+                serverOnline = (serverPlayersObject["online"] as? Int) ?: 0
+                serverMaxOnline = (serverPlayersObject["max"] as? Int) ?: 0
+                val serverSamples = serverPlayersObject["sample"]
+                if (serverSamples is JSONArray) {
+                    serverPlayers = serverSamples.mapNotNull {
+                        if (it is JSONObject) {
+                            MinecraftServerStatus.Player(
+                                (it["name"] as? String) ?: "",
+                                (it["id"] as? String) ?: "",
+                            )
+                        } else null
+                    }
+                }
+            }
+        }
+        val serverVersion =
+            (statusObject["version"] as? JSONObject)?.let { it["name"] as? String } ?: ""
 
         // https://wiki.vg/Server_List_Ping#Ping_Request
         writeChannel.write(10) {
@@ -69,7 +90,15 @@ class MinecraftClient(private val connection: Socket) :
             readChannel.awaitContent()
         }
 
-        return@withContext MinecraftServerStatus(serverFavicon, latency, serverDescriptionText)
+        return@withContext MinecraftServerStatus(
+            serverFavicon,
+            latency,
+            serverDescriptionText,
+            serverVersion,
+            serverOnline,
+            serverMaxOnline,
+            serverPlayers,
+        )
     }
 
     private suspend fun sendHandshake(version: Int, nextState: Byte, appendix: ByteArray?) =

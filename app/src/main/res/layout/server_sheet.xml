@@ -125,6 +125,98 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/server_sheet_players_card"
+            android:layout_width="0dp"
+            android:layout_height="72dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@id/server_sheet_version_card"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/server_sheet_motd_card">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="@string/description_online"
+                app:layout_constraintStart_toStartOf="@+id/server_sheet_players_card"
+                app:layout_constraintTop_toTopOf="@+id/server_sheet_players_card"
+                app:srcCompat="@drawable/ic_people_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="42dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/description_online"
+                android:textAppearance="?attr/textAppearanceLabelLarge"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/server_sheet_players_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|bottom"
+                android:layout_marginStart="42dp"
+                android:layout_marginBottom="15dp"
+                android:maxLines="1"
+                android:text="@string/description_pinging"
+                android:textAppearance="?attr/textAppearanceBody1"
+                android:textSize="16sp" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/server_sheet_version_card"
+            android:layout_width="0dp"
+            android:layout_height="72dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/server_sheet_players_card"
+            app:layout_constraintTop_toBottomOf="@id/server_sheet_motd_card">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="@string/description_version"
+                app:layout_constraintStart_toStartOf="@+id/server_sheet_version_card"
+                app:layout_constraintTop_toTopOf="@+id/server_sheet_version_card"
+                app:srcCompat="@drawable/ic_update_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="42dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/description_version"
+                android:textAppearance="?attr/textAppearanceLabelLarge"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/server_sheet_version_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|bottom"
+                android:layout_marginStart="42dp"
+                android:layout_marginBottom="15dp"
+                android:maxLines="1"
+                android:text="@string/description_pinging"
+                android:textAppearance="?attr/textAppearanceBody1"
+                android:textSize="16sp" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/server_sheet_latency_card"
             android:layout_width="0dp"
             android:layout_height="72dp"
@@ -134,7 +226,7 @@
             android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/server_sheet_motd_card">
+            app:layout_constraintTop_toBottomOf="@id/server_sheet_players_card">
 
             <ImageView
                 android:layout_width="wrap_content"

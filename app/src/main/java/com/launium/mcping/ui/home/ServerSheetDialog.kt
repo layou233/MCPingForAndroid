@@ -1,5 +1,6 @@
 package com.launium.mcping.ui.home
 
+import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -22,6 +23,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
+@SuppressLint("SetTextI18n")
 class ServerSheetDialog(
     context: Context,
     private val server: MinecraftServer,
@@ -48,6 +50,16 @@ class ServerSheetDialog(
             setLatency(context, binding.serverSheetLatencyText, server.latestPing)
             server.icon?.let { binding.serverSheetImage.setImageBitmap(it) }
             binding.serverSheetMotd.text = parseMinecraftColor(server.description)
+            binding.serverSheetPlayersText.text = "${server.online}/${server.maxOnline}"
+            binding.serverSheetVersionText.text = server.version
+            binding.serverSheetVersionCard.setOnClickListener {
+                MaterialAlertDialogBuilder(context).apply {
+                    setTitle(R.string.description_version)
+                    setMessage(server.version)
+                    setIcon(R.drawable.ic_update_24dp)
+                    setCancelable(true)
+                }.show()
+            }
             binding.serverSheetTestLatency.setOnClickListener { ping() }
             if (isLocal) {
                 binding.serverSheetDeleteServer.setOnClickListener {
@@ -124,6 +136,8 @@ class ServerSheetDialog(
                     setLatency(context, binding.serverSheetLatencyText, server.latestPing)
                     server.icon?.let { binding.serverSheetImage.setImageBitmap(it) }
                     binding.serverSheetMotd.text = parseMinecraftColor(server.description)
+                    binding.serverSheetPlayersText.text = "${server.online}/${server.maxOnline}"
+                    binding.serverSheetVersionText.text = server.version
                     if (isLocal) {
                         ServerManager.serverDao.update(server)
                     }
