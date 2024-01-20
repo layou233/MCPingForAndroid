@@ -32,6 +32,9 @@
         <activity
             android:name=".ui.ErrorActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.home.PlayerListActivity"
+            android:exported="false" />
         <activity android:name=".ui.ServerURIActivity"
             android:exported="true">
             <intent-filter>

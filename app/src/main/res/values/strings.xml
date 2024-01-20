@@ -36,6 +36,9 @@
     <string name="description_server_icon">Server icon</string>
     <string name="description_cancel">Cancel</string>
     <string name="description_error_message">Error message</string>
+    <string name="description_player">Player</string>
+    <string name="description_copy_name">Copy name</string>
+    <string name="description_copy_uuid">Copy UUID</string>
 
     <string name="dns" translatable="false">DNS</string>
     <string name="dns_discovered_system">Detected system DNS servers</string>

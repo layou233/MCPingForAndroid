@@ -14,6 +14,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.launium.mcping.R
 import com.launium.mcping.common.minecraft.parseMinecraftColor
+import com.launium.mcping.common.toArrayList
 import com.launium.mcping.database.ServerManager
 import com.launium.mcping.databinding.ServerSheetBinding
 import com.launium.mcping.server.MinecraftServer
@@ -51,6 +52,15 @@ class ServerSheetDialog(
             server.icon?.let { binding.serverSheetImage.setImageBitmap(it) }
             binding.serverSheetMotd.text = parseMinecraftColor(server.description)
             binding.serverSheetPlayersText.text = "${server.online}/${server.maxOnline}"
+            binding.serverSheetPlayersCard.setOnClickListener {
+                home?.startActivity(
+                    Intent(context, PlayerListActivity::class.java)
+                        .putParcelableArrayListExtra(
+                            PlayerListActivity.KEY_PLAYER_LIST,
+                            server.players.toArrayList()
+                        )
+                )
+            }
             binding.serverSheetVersionText.text = server.version
             binding.serverSheetVersionCard.setOnClickListener {
                 MaterialAlertDialogBuilder(context).apply {

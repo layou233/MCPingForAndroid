@@ -39,4 +39,7 @@
     <string name="error_occurred">运行时发生预期外的错误。如果你不知道发生了什么，请将这个发送给开发者来获得帮助。</string>
     <string name="error_unknown">未知错误</string>
     <string name="license">许可证</string>
+    <string name="description_player">玩家</string>
+    <string name="description_copy_uuid">复制 UUID</string>
+    <string name="description_copy_name">复制名字</string>
 </resources>
