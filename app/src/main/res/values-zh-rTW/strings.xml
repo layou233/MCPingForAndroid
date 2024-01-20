@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ignore_srv_redirect">忽略 SRV 重定向</string>
+    <string name="bummer">糟糕</string>
+    <string name="app_description">與你的所愛保持同步。</string>
+    <string name="title_home">主頁</string>
+    <string name="title_discovery">探索</string>
+    <string name="title_settings">設定</string>
+    <string name="title_add_server">添加一個新伺服器</string>
+    <string name="title_confirm_delete">確認刪除</string>
+    <string name="dialog_delete">你確定要移除這個伺服器嗎？它將會永遠消失！ （非常久！）</string>
+    <string name="dialog_illegal_concurrency_number">併發數不能為非自然數。請重新檢查。</string>
+    <string name="home_title">伺服器</string>
+    <string name="server_sheet_copy_icon">複製伺服器圖標到剪貼板</string>
+    <string name="server_address">伺服器網址</string>
+    <string name="server_display_name">伺服器顯示名</string>
+    <string name="copy">複製</string>
+    <string name="report_bug">報告 BUG</string>
+    <string name="description_refresh">刷新</string>
+    <string name="description_add_server">添加一個新伺服器</string>
+    <string name="description_save">保存</string>
+    <string name="description_delete">刪除</string>
+    <string name="description_share">分享</string>
+    <string name="description_latency">延遲</string>
+    <string name="description_online">在綫</string>
+    <string name="description_version">版本</string>
+    <string name="description_untested">未測試</string>
+    <string name="description_server_icon">伺服器圖標</string>
+    <string name="description_cancel">取消</string>
+    <string name="description_error_message">錯誤訊息</string>
+    <string name="dns_discovered_system">檢測到的系統 DNS 伺服器</string>
+    <string name="dns_no_system">沒有檢測到伺服器。</string>
+    <string name="dns_srv_resolver">SRV 解析器</string>
+    <string name="dns_srv_resolver_system_api">系統 API (Android 10+)</string>
+    <string name="dns_srv_resolver_compatible">兼容</string>
+    <string name="concurrency">併發</string>
+    <string name="max_concurrent_pings">最大併發 Ping 數</string>
+    <string name="illegal_concurrency_number">非法併發數</string>
+    <string name="error_occurred">作業時發生預期外的錯誤。如果你不知道發生了什麽，請將這個發送給開發者來獲得幫助。</string>
+    <string name="error_unknown">未知錯誤</string>
+    <string name="license">許可證</string>
+</resources>

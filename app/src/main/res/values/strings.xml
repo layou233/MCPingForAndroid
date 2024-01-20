@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MCPing</string>
+    <string name="app_name" translatable="false">MCPing</string>
     <string name="app_description">Stay in sync with your favorites.</string>
 
     <string name="title_home">Home</string>
@@ -28,8 +28,8 @@
     <string name="description_delete">Delete</string>
     <string name="description_share">Share</string>
     <string name="description_latency">Latency</string>
-    <string name="description_ping">Ping</string>
-    <string name="description_pinging">Pinging…</string>
+    <string name="description_ping" translatable="false">Ping</string>
+    <string name="description_pinging" translatable="false">Pinging…</string>
     <string name="description_online">Online</string>
     <string name="description_version">Version</string>
     <string name="description_untested">Untested</string>
@@ -37,7 +37,7 @@
     <string name="description_cancel">Cancel</string>
     <string name="description_error_message">Error message</string>
 
-    <string name="dns">DNS</string>
+    <string name="dns" translatable="false">DNS</string>
     <string name="dns_discovered_system">Detected system DNS servers</string>
     <string name="dns_no_system">No server detected.</string>
     <string name="dns_srv_resolver">SRV resolver</string>
