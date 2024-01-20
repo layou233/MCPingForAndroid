@@ -12,7 +12,6 @@
     <string name="dialog_illegal_concurrency_number">The concurrency number cannot be an unnatural number. Please check again.</string>
 
     <string name="home_title">Servers</string>
-    <string name="server_sheet_title">Server details</string>
     <string name="server_sheet_copy_icon">Copy server icon to Clipboard</string>
 
     <string name="server_address">Server address</string>

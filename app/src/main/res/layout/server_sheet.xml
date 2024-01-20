@@ -16,32 +16,14 @@
         android:orientation="vertical"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
             android:id="@+id/server_sheet_handlebar"
-            android:layout_width="48dp"
-            android:layout_height="5dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="12dp"
-            android:backgroundTint="@android:color/darker_gray"
-            app:cardElevation="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/server_sheet_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingTop="8dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="16dp"
-            android:text="@string/server_sheet_title"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/server_sheet_handlebar" />
-
 
         <ImageView
             android:id="@+id/server_sheet_image"
@@ -53,7 +35,7 @@
             android:paddingEnd="24dp"
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/server_sheet_title"
+            app:layout_constraintTop_toBottomOf="@+id/server_sheet_handlebar"
             app:srcCompat="@mipmap/pack" />
 
         <TextView
@@ -69,7 +51,7 @@
             app:layout_constraintBottom_toTopOf="@+id/server_sheet_address_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/server_sheet_image"
-            app:layout_constraintTop_toBottomOf="@+id/server_sheet_title"
+            app:layout_constraintTop_toBottomOf="@+id/server_sheet_handlebar"
             tools:ignore="HardcodedText" />
 
         <com.google.android.material.textfield.TextInputLayout
