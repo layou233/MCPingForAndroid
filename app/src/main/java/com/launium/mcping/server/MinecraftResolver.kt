@@ -37,6 +37,8 @@ private const val CLASS_IN: Short = 1
 private const val FLAG_RESPONSE: UShort = 32768U // most significant bit
 private const val FLAG_RCODE_MASK: UShort = 15U
 
+private const val COMPRESSED_LABEL_MARK: UByte = 0xC0U
+
 class MinecraftResolver(uri: String) {
 
     private val serverURI = URI(uri)
@@ -88,12 +90,21 @@ class MinecraftResolver(uri: String) {
         val addressBuilder = StringBuilder()
         repeat(answersCount) {
             addressBuilder.clear()
-            response.discard(16)
+            while (true) { // skip domain name
+                val bytesCount = response.readByte().toUByte()
+                if (bytesCount == 0.toUByte()) break
+                if (bytesCount and COMPRESSED_LABEL_MARK == COMPRESSED_LABEL_MARK) {
+                    response.discard(1)
+                    break
+                }
+                response.discard(bytesCount.toInt())
+            }
+            response.discard(14)
             val port = response.readUShort()
             while (true) {
-                val bytesCount = response.readByte().toInt()
-                if (bytesCount == 0) break
-                addressBuilder.append(response.readTextExactBytes(bytesCount))
+                val bytesCount = response.readByte().toUInt()
+                if (bytesCount == 0U) break
+                addressBuilder.append(response.readTextExactBytes(bytesCount.toInt()))
                 addressBuilder.append('.')
             }
             results.add(InetSocketAddress(addressBuilder.toString(), port.toInt()))
@@ -126,7 +137,7 @@ class MinecraftResolver(uri: String) {
                                 )
                             } catch (e: Exception) {
                                 continuation.resumeWithException(IOException("Fail to parse SRV response: [00000000 ${
-                                    answer.joinToString { it.toHexString() + " " }
+                                    answer.joinToString(separator = " ") { it.toHexString() } // hex dump
                                 }]", e))
                             }
 
