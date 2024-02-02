@@ -16,16 +16,20 @@ android {
         applicationId = "com.launium.mcping"
         minSdk = 21
         targetSdk = 34
-        versionCode = 7
-        versionName = "0.3.1"
+        versionCode = 8
+        versionName = "0.3.2"
         setProperty("archivesBaseName", "MCPing-$versionName")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+        }
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
@@ -56,7 +60,7 @@ dependencies {
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("io.ktor:ktor-network:2.3.5")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation("com.alibaba.fastjson2:fastjson2:2.0.45.android4")
+    implementation("com.alibaba.fastjson2:fastjson2:2.0.46.android5")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")

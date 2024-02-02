@@ -62,12 +62,16 @@ fun parseMinecraftColor(message: String): SpannableStringBuilder {
             else -> null
         }
         if (span != null) {
-            builder.setSpan(
-                span,
-                it.second,
-                resetSymbols.find { r -> it.second <= r.second }?.second ?: builder.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-            )
+            val endPosition =
+                resetSymbols.find { r -> it.second <= r.second }?.second ?: builder.length
+            if (endPosition - it.second > 0) {
+                builder.setSpan(
+                    span,
+                    it.second,
+                    endPosition,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+                )
+            }
         }
     }
 

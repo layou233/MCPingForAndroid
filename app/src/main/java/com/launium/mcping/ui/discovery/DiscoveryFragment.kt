@@ -28,7 +28,7 @@ import kotlinx.coroutines.sync.Semaphore
 import java.net.URL
 import java.util.Locale
 
-private const val SERVER_LIST_URL = "https://www.jsip.club/api/ajax.php?request=get_line_list"
+private const val SERVER_LIST_URL = "https://www.jsip.club/pub-api/line.php"
 
 class DiscoveryFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
