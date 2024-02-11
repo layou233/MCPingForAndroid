@@ -40,7 +40,7 @@ class MinecraftClient(private val connection: Socket) : Closeable {
         readChannel.readFully(statusArray)
         val statusObject =
             JSON.parse(statusArray, JSONReader.Feature.InitStringFieldAsEmpty) as JSONObject
-        val serverFavicon = statusObject["favicon"] as String
+        val serverFavicon = (statusObject["favicon"] as? String) ?: ""
         var serverDescriptionText = ""
         when (val description = statusObject["description"]) {
             is JSONObject -> {

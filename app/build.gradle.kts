@@ -16,8 +16,8 @@ android {
         applicationId = "com.launium.mcping"
         minSdk = 21
         targetSdk = 34
-        versionCode = 8
-        versionName = "0.3.2"
+        versionCode = 9
+        versionName = "0.3.3"
         setProperty("archivesBaseName", "MCPing-$versionName")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
