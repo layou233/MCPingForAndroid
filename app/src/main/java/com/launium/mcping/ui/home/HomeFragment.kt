@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.withContext
 
 class HomeFragment : Fragment() {
 
@@ -55,7 +56,7 @@ class HomeFragment : Fragment() {
         }
         lifecycleScope.launch(Dispatchers.IO) {
             adapter.updateServerList()
-            activity?.runOnUiThread {
+            withContext(Dispatchers.Main) {
                 binding.container.adapter = adapter
             }
         }
@@ -77,7 +78,7 @@ class HomeFragment : Fragment() {
                             }
                             semaphore.release()
                             if (changed) {
-                                activity?.runOnUiThread {
+                                withContext(Dispatchers.Main) {
                                     adapter.notifyItemChanged(i)
                                 }
                                 ServerManager.serverDao.update(server)

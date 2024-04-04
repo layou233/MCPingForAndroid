@@ -25,6 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.withContext
 import java.net.URL
 import java.util.Locale
 
@@ -108,7 +109,7 @@ class DiscoveryFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                         (serverObject["address"] as String).lowercase(Locale.getDefault())
                     )
                 }
-                activity?.runOnUiThread {
+                withContext(Dispatchers.Main) {
                     adapter.notifyDataSetChanged()
                 }
                 val semaphore = Semaphore(Preferences.maxConcurrentPings)
@@ -126,7 +127,7 @@ class DiscoveryFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                             }
                             semaphore.release()
                             if (changed) {
-                                activity?.runOnUiThread {
+                                withContext(Dispatchers.Main) {
                                     adapter.notifyItemChanged(i)
                                 }
                             }
