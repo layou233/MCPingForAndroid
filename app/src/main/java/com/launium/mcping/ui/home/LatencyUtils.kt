@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.widget.TextView
 import com.google.android.material.color.MaterialColors
 import com.launium.mcping.R
+import com.launium.mcping.common.chooseThemedResColor
 
 @SuppressLint("SetTextI18n")
 internal fun setLatency(context: Context, textView: TextView, latency: Int) {
@@ -18,13 +19,25 @@ internal fun setLatency(context: Context, textView: TextView, latency: Int) {
             MaterialColors.harmonizeWithPrimary(
                 context,
                 if (latency > 200) {
-                    Color.RED
+                    context.chooseThemedResColor(
+                        android.R.color.holo_red_light,
+                        android.R.color.holo_red_dark
+                    )
                 } else if (latency > 160) {
-                    Color.YELLOW
+                    context.chooseThemedResColor(
+                        android.R.color.holo_orange_light,
+                        android.R.color.holo_orange_dark
+                    )
                 } else if (latency > 100) {
-                    Color.BLUE
+                    context.chooseThemedResColor(
+                        android.R.color.holo_blue_light,
+                        android.R.color.holo_blue_dark
+                    )
                 } else {
-                    Color.GREEN
+                    context.chooseThemedResColor(
+                        android.R.color.holo_green_light,
+                        android.R.color.holo_green_dark
+                    )
                 }
             )
         )

@@ -1,37 +1,28 @@
 package com.launium.mcping.ui
 
 import android.os.Bundle
-import android.util.TypedValue
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import com.google.android.material.elevation.SurfaceColors
 import com.launium.mcping.R
+import com.launium.mcping.common.getAttrColor
 
 abstract class AbstractActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val color = SurfaceColors.SURFACE_2.getColor(this)
-        window.statusBarColor = color
-        window.navigationBarColor = color
+        val colorSurfaceContainer =
+            getAttrColor(com.google.android.material.R.attr.colorSurfaceContainer)
+        window.statusBarColor = colorSurfaceContainer
+        window.navigationBarColor = colorSurfaceContainer
     }
 
     fun setupHomeButton() {
         supportActionBar?.setHomeAsUpIndicator(AppCompatResources.getDrawable(
             this, R.drawable.ic_arrow_back_24dp
         )!!.apply {
-            setTint(buttonColor)
+            setTint(getAttrColor(com.google.android.material.R.attr.colorOnSurface))
         })
     }
-
-    val buttonColor: Int
-        get() {
-            val typedValue = TypedValue()
-            theme.resolveAttribute(
-                com.google.android.material.R.attr.colorOnSurface, typedValue, true
-            )
-            return typedValue.data
-        }
 
 }
