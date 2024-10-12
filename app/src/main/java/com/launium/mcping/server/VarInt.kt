@@ -1,6 +1,7 @@
 package com.launium.mcping.server
 
 import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.readByte
 import java.nio.ByteBuffer
 
 // modified from https://wiki.vg/Protocol#VarInt_and_VarLong

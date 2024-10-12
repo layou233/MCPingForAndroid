@@ -1,5 +1,6 @@
 package com.launium.mcping.server
 
+import android.annotation.SuppressLint
 import android.net.DnsResolver
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -9,22 +10,21 @@ import com.launium.mcping.ui.settings.Preferences
 import io.ktor.network.sockets.Datagram
 import io.ktor.network.sockets.TypeOfService
 import io.ktor.network.sockets.aSocket
-import io.ktor.utils.io.core.ByteReadPacket
-import io.ktor.utils.io.core.Input
-import io.ktor.utils.io.core.readShort
-import io.ktor.utils.io.core.readTextExactBytes
-import io.ktor.utils.io.core.readUShort
-import io.ktor.utils.io.streams.asInput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.withContext
+import kotlinx.io.Buffer
+import kotlinx.io.Source
+import kotlinx.io.asSource
+import kotlinx.io.buffered
+import kotlinx.io.readByteArray
+import kotlinx.io.readUShort
+import kotlinx.io.writeString
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.SocketException
 import java.net.URI
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -45,7 +45,7 @@ class MinecraftResolver(uri: String) {
 
     @OptIn(ExperimentalUnsignedTypes::class)
     fun parseSRVResponse(
-        response: Input,
+        response: Source,
         serviceName: String,
         transactionID: Short = -1,
         queryLength: Int = -1,
@@ -74,8 +74,8 @@ class MinecraftResolver(uri: String) {
             )
         }
         val answersCount = response.readShort().toInt()
-        response.discard(4) // ignore authority RRs and additional RRs
-        response.discard(if (queryLength != -1) {
+        response.skip(4) // ignore authority RRs and additional RRs
+        response.skip(if (queryLength != -1) {
             queryLength
         } else {
             var queryLength = 1 + 2 + 2 // end of domain + TYPE_SRV + CLASS_IN
@@ -83,7 +83,7 @@ class MinecraftResolver(uri: String) {
                 queryLength += 1 + it.length
             }
             queryLength
-        })
+        }.toLong())
 
         if (answersCount == 0) return null
         val results = ArrayList<InetSocketAddress>(answersCount)
@@ -94,17 +94,17 @@ class MinecraftResolver(uri: String) {
                 val bytesCount = response.readByte().toUByte()
                 if (bytesCount == 0.toUByte()) break
                 if (bytesCount and COMPRESSED_LABEL_MARK == COMPRESSED_LABEL_MARK) {
-                    response.discard(1)
+                    response.skip(1)
                     break
                 }
-                response.discard(bytesCount.toInt())
+                response.skip(bytesCount.toLong())
             }
-            response.discard(14)
+            response.skip(14)
             val port = response.readUShort()
             while (true) {
                 val bytesCount = response.readByte().toUInt()
                 if (bytesCount == 0U) break
-                addressBuilder.append(response.readTextExactBytes(bytesCount.toInt()))
+                addressBuilder.append(response.readByteArray(bytesCount.toInt()))
                 addressBuilder.append('.')
             }
             results.add(InetSocketAddress(addressBuilder.toString(), port.toInt()))
@@ -112,6 +112,7 @@ class MinecraftResolver(uri: String) {
         return results
     }
 
+    @SuppressLint("WrongConstant")
     @OptIn(ExperimentalStdlibApi::class)
     @RequiresApi(Build.VERSION_CODES.Q)
     private suspend fun querySRVPlatform(serviceName: String) = withContext(Dispatchers.IO) {
@@ -130,7 +131,7 @@ class MinecraftResolver(uri: String) {
                             0 -> try { // 0 stands for NO_ERROR
                                 continuation.resume(
                                     parseSRVResponse(
-                                        ByteArrayInputStream(answer).asInput(),
+                                        ByteArrayInputStream(answer).asSource().buffered(),
                                         serviceName,
                                         verifyTransactionID = false
                                     )
@@ -170,26 +171,24 @@ class MinecraftResolver(uri: String) {
                 }.connect(address)
 
                 val transactionID = Random.nextBits(16).toShort()
-                val buffer = ByteBuffer.allocate(512)
-                buffer.order(ByteOrder.BIG_ENDIAN)
-                buffer.putShort(transactionID)
-                buffer.put(1)
-                buffer.put(0)
-                buffer.putShort(1) // 1 question
-                buffer.putShort(0) // no answer RR
-                buffer.putShort(0) // no authority RR
-                buffer.putShort(0) // no additional RR
+                val buffer = Buffer()
+                buffer.writeShort(transactionID)
+                buffer.writeByte(1)
+                buffer.writeByte(0)
+                buffer.writeShort(1) // 1 question
+                buffer.writeShort(0) // no answer RR
+                buffer.writeShort(0) // no authority RR
+                buffer.writeShort(0) // no additional RR
                 var queryLength = 1 + 2 + 2 // end of domain + TYPE_SRV + CLASS_IN
                 serviceName.trimEnd('.').split('.').forEach {
-                    buffer.put(it.length.toByte())
-                    buffer.put(it.toByteArray())
+                    buffer.writeByte(it.length.toByte())
+                    buffer.writeString(it)
                     queryLength += 1 + it.length
                 }
-                buffer.put(0) // end of domain
-                buffer.putShort(TYPE_SRV)
-                buffer.putShort(CLASS_IN)
-                buffer.flip()
-                socket.outgoing.send(Datagram(ByteReadPacket(buffer), address))
+                buffer.writeByte(0) // end of domain
+                buffer.writeShort(TYPE_SRV)
+                buffer.writeShort(CLASS_IN)
+                socket.outgoing.send(Datagram(buffer, address))
 
                 val response = socket.incoming.receive().packet
                 return@withContext parseSRVResponse(

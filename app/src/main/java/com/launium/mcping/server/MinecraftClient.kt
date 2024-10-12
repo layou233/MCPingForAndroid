@@ -8,8 +8,11 @@ import io.ktor.network.sockets.InetSocketAddress
 import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
+import io.ktor.utils.io.readByte
 import io.ktor.utils.io.readFully
+import io.ktor.utils.io.write
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.Closeable
 import kotlin.system.measureTimeMillis
@@ -80,7 +83,7 @@ class MinecraftClient(private val connection: Socket) : Closeable {
             (statusObject["version"] as? JSONObject)?.let { it["name"] as? String } ?: ""
 
         // https://wiki.vg/Server_List_Ping#Ping_Request
-        writeChannel.write(10) {
+        writeChannel.write(10) { it->
             it.put(9)
             it.put(ID_PING)
             it.putLong(System.currentTimeMillis())
@@ -110,7 +113,7 @@ class MinecraftClient(private val connection: Socket) : Closeable {
             writeChannel.write(
                 estimatedLength + estimateVarIntBinaryLength(estimatedLength) + (appendix?.size
                     ?: 0)
-            ) {
+            ) { it->
                 it.putVarInt(estimatedLength)
                 it.put(ID_HANDSHAKE)
                 it.putVarInt(version)
@@ -124,7 +127,7 @@ class MinecraftClient(private val connection: Socket) : Closeable {
         }
 
     override fun close() {
-        writeChannel.flush()
+        runBlocking(Dispatchers.IO) { writeChannel.flush() }
         connection.close()
     }
 
