@@ -17,7 +17,8 @@ import kotlinx.io.Buffer
 import kotlinx.io.Source
 import kotlinx.io.asSource
 import kotlinx.io.buffered
-import kotlinx.io.readByteArray
+import kotlinx.io.readString
+import kotlinx.io.readUByte
 import kotlinx.io.readUShort
 import kotlinx.io.writeString
 import java.io.ByteArrayInputStream
@@ -91,7 +92,7 @@ class MinecraftResolver(uri: String) {
         repeat(answersCount) {
             addressBuilder.clear()
             while (true) { // skip domain name
-                val bytesCount = response.readByte().toUByte()
+                val bytesCount = response.readUByte()
                 if (bytesCount == 0.toUByte()) break
                 if (bytesCount and COMPRESSED_LABEL_MARK == COMPRESSED_LABEL_MARK) {
                     response.skip(1)
@@ -102,9 +103,9 @@ class MinecraftResolver(uri: String) {
             response.skip(14)
             val port = response.readUShort()
             while (true) {
-                val bytesCount = response.readByte().toUInt()
-                if (bytesCount == 0U) break
-                addressBuilder.append(response.readByteArray(bytesCount.toInt()))
+                val bytesCount = response.readUByte().toLong()
+                if (bytesCount == 0L) break
+                addressBuilder.append(response.readString(bytesCount))
                 addressBuilder.append('.')
             }
             results.add(InetSocketAddress(addressBuilder.toString(), port.toInt()))
