@@ -88,19 +88,23 @@ class DiscoveryFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             } catch (e: Exception) {
                 val stackTrace = Log.getStackTraceString(e)
                 Log.e(TAG, stackTrace)
-                startActivity(
-                    Intent(
-                        binding.root.context, ErrorActivity::class.java
-                    ).putExtra(ErrorActivity.KEY_ERROR, stackTrace)
-                )
+                _binding?.let {
+                    startActivity(
+                        Intent(
+                            it.root.context, ErrorActivity::class.java
+                        ).putExtra(ErrorActivity.KEY_ERROR, stackTrace)
+                    )
+                }
                 return@launch
             }
             if (resultObject["code"] != 200) {
-                startActivity(
-                    Intent(
-                        binding.root.context, ErrorActivity::class.java
-                    ).putExtra(ErrorActivity.KEY_ERROR, "Unexpected code: $resultObject")
-                )
+                _binding?.let {
+                    startActivity(
+                        Intent(
+                            it.root.context, ErrorActivity::class.java
+                        ).putExtra(ErrorActivity.KEY_ERROR, "Unexpected code: $resultObject")
+                    )
+                }
             } else {
                 adapter.servers = (resultObject["data"] as JSONArray).map {
                     val serverObject = it as JSONObject
