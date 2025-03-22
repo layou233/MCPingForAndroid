@@ -10,11 +10,6 @@ abstract class AbstractActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val colorSurfaceContainer =
-            getAttrColor(com.google.android.material.R.attr.colorSurfaceContainer)
-        window.statusBarColor = colorSurfaceContainer
-        window.navigationBarColor = colorSurfaceContainer
     }
 
     fun setupHomeButton() {
